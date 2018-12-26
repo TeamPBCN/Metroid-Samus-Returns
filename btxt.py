@@ -2,9 +2,12 @@
 import argparse
 import binascii
 import codecs
+import os
 import re
 import struct
 from io import BytesIO
+
+from utils import mkdirs
 
 
 class FileTypeError(Exception):
@@ -140,12 +143,17 @@ def main():
                         action='store_true', default=False)
     parser.add_argument('-b', '--binary', help="Set binary text file.")
     parser.add_argument('-p', '--plain', help='Set plain text file.')
+    parser.add_argument('-m', '--mkdir', help='Make directory for output.', action='store_true', default=False)
     options = parser.parse_args()
 
     if options.export:
+        if(options.mkdir):
+            mkdirs(os.path.split(options.plain)[0])
         btxt = BinaryText(options.binary)
         btxt.export_text(options.plain)
     elif options.create:
+        if(options.mkdir):
+            mkdirs(os.path.split(options.binary)[0])
         btxt = BinaryText()
         btxt.from_text(options.plain)
         btxt.save(options.binary)
