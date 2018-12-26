@@ -16,7 +16,7 @@ class PackageEntry(object):
                     t = 'lc'
             except:
                 t = 'bin'
-            return t.lower()
+            return t.lower().strip()
     
     @property
     def filename(self):
@@ -26,14 +26,33 @@ class Package(object):
     DATA_ALIGNMENTS = {
         'bin': 0,
         'btre': 0x4,
+        'cut': 0x4,
         'cwav': 0x20,
         'lc': 0x4,
+        'lsnd': 0x4,
         'manm': 0x4,
+        'mcan': 0x4,
+        'mdef': 0x4,
+        'mfnt': 0x4,
+        'mmdl': 0x4,
+        'mnav': 0x4,
         'mpsy': 0x4,
         'msad': 0x4,
+        'msat': 0x4,
+        'msbk': 0x4,
         'mscd': 0x4,
+        'mscu': 0x4,
+        'msev': 0x4,
+        'mses': 0x4,
+        'msem': 0x4,
+        'msld': 0x4,
+        'msnd': 0x4,
+        'mssa': 0x4,
+        'mssd': 0x4,
         'mtxt': 0x80,
+        'muct': 0x4,
     }
+    TAIL_ALIGN_TYPES = ['cut', 'msat', 'mscu', 'mtxt']
 
     def __init__(self, path=None):
         if path:
@@ -103,6 +122,8 @@ class Package(object):
             e.DataStart = fs.tell()
             fs.write(e.Data)
             e.DataEnd = fs.tell()
+            if t in self.TAIL_ALIGN_TYPES:
+                fs.write('\x00'*align(fs.tell(), 4))
         data_size = fs.tell() - head_size - 4
         
         fs.seek(0, 0)
@@ -116,6 +137,10 @@ class Package(object):
 def align(value, alignment):
     return (-value % alignment + alignment) % alignment
 
+def mkdirs(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 def main():
     parser = argparse.ArgumentParser(
         description="Package tool for Metroid: Samus Returns.\r\nCreate by LITTOMA, TeamPB, 2018.12")
@@ -126,9 +151,12 @@ def main():
                         action='store_true', default=False)
     parser.add_argument('-f', '--file', help="Set package file.")
     parser.add_argument('-d', '--dir', help='Set dir.')
+    parser.add_argument('-m', '--mkdir', help='Make directory for output.', action='store_true', default=False)
     options = parser.parse_args()
 
     if options.create:
+        if options.mkdir:
+            mkdirs(os.path.split(options.file)[0])
         pkg = Package()
         pkg.create(options.dir)
         pkg.save(options.file)
