@@ -1,5 +1,10 @@
-import struct, os, argparse
+import argparse
+import os
+import struct
 from io import BytesIO
+
+from utils import mkdirs
+
 
 class PackageEntry(object):
     def __init__(self, data=None):
@@ -54,19 +59,23 @@ class Package(object):
     }
     TAIL_ALIGN_TYPES = ['cut', 'msat', 'mscu', 'mtxt']
 
-    def __init__(self, path=None):
+    def __init__(self, path=None, verbose=False):
         if path:
             self.load(path)
+        self.Verbose = verbose
     
     def create(self, path):
         self.entries = []
         files = os.listdir(path)
         for fp in files:
+            if 'empty.txt' in fp:
+                continue
             entry = PackageEntry()
             offsetstr, hashstr = os.path.splitext(os.path.basename(fp))[0].split('_')
             entry.Hash = int(hashstr, 16)
             fp = os.path.join(path, fp)
-            print 'Load:', fp
+            if self.Verbose:
+                print 'Load:', fp
             entry.Data = open(fp, 'rb').read()
             self.entries.append(entry)
 
@@ -74,7 +83,8 @@ class Package(object):
         for i in range(len(self.entries)):
             fp = os.path.join(path, self.entries[i].filename)
             if os.path.isfile(fp):
-                print 'Load:', fp
+                if self.Verbose:
+                    print 'Load:', fp
                 self.entries[i].Data = open(fp, 'rb').read()
 
     def load(self, path):
@@ -97,10 +107,16 @@ class Package(object):
         if not os.path.isdir(path) and not os.path.exists(path):
             os.makedirs(path)
         
+        if len(self.entries) == 0:
+            with open(os.path.join(path, 'empty.txt'), 'w')as empty:
+                empty.write("This directory is empty.")
+                return
+        
         for e in self.entries:
             pathOut = os.path.join(path, e.filename)
             open(pathOut, 'wb').write(e.Data)
-            print 'Extract:', pathOut
+            if self.Verbose:
+                print 'Extract:', pathOut
     
     def save(self, path):
         fs = open(path, 'wb')
@@ -137,10 +153,6 @@ class Package(object):
 def align(value, alignment):
     return (-value % alignment + alignment) % alignment
 
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
 def main():
     parser = argparse.ArgumentParser(
         description="Package tool for Metroid: Samus Returns.\r\nCreate by LITTOMA, TeamPB, 2018.12")
@@ -152,16 +164,17 @@ def main():
     parser.add_argument('-f', '--file', help="Set package file.")
     parser.add_argument('-d', '--dir', help='Set dir.')
     parser.add_argument('-m', '--mkdir', help='Make directory for output.', action='store_true', default=False)
+    parser.add_argument('-v', '--verbose', help='Set verbose.', action='store_true', default=False)
     options = parser.parse_args()
 
     if options.create:
         if options.mkdir:
             mkdirs(os.path.split(options.file)[0])
-        pkg = Package()
+        pkg = Package(verbose=options.verbose)
         pkg.create(options.dir)
         pkg.save(options.file)
     elif options.extract:
-        pkg = Package(options.file)
+        pkg = Package(options.file, verbose=options.verbose)
         pkg.extract(options.dir)
 
 if __name__ == "__main__":
