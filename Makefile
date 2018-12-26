@@ -1,10 +1,12 @@
 instpath = $(subst $(word 1, $(subst romfs/, ,$1)),./,$1)
 
-PKGS = $(shell find ./cia -type f -name "*.pkg")
+ROM_DIR ?= ./cia
+
+PKGS = $(shell find $(ROM_DIR) -type f -name "*.pkg")
 PKGS_INST := $(call instpath,$(shell cat packages.txt))
 PKGTOOL = python pkg.py
 
-BTXTS = $(shell find ./cia -type f -name "*.txt")
+BTXTS = $(shell find $(ROM_DIR) -type f -name "*.txt")
 ifeq ($(BTXTS),)
 BTXTS = $(shell cat texts.txt)
 endif
