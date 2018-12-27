@@ -10,7 +10,10 @@ BTXTS = $(shell find $(ROM_DIR) -type f -name "*.txt")
 ifeq ($(BTXTS),)
 BTXTS = $(shell cat texts.txt)
 endif
+BTXTS_INST = $(call instpath,$(BTXTS))
+ifeq ($(BTXTS_INST),)
 BTXTS_INST = $(call instpath,$(shell cat texts.txt))
+endif
 BTXTS_DIR = $(dir $(word 1, $(BTXTS)))
 PTXTS = $(addprefix localization/,$(notdir $(BTXTS)))
 TXTTOOL = python btxt.py
@@ -34,7 +37,8 @@ localization/%.txt: $(BTXTS_DIR)%.txt
 romfs/system/localization/%.txt: localization/%.txt
 	$(TXTTOOL) --mkdir -cb $@ -p $<
 
-romfs/%.pkg: unpacks/%/*.*
+# Make packages depending on their entries is extremely slow, damn.
+romfs/%.pkg: # unpacks/%/*.*
 	$(PKGTOOL) --mkdir -cf $@ -d unpacks/$*
 
 clean:
