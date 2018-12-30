@@ -9,24 +9,51 @@ from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
 freetype.init()
 
+ICONS = {
+    u'！':'L',
+    u'\uff00':'R',
+    u'＂':'A',
+    u'＃':'B',
+    u'）':'X',
+    u'（':'Y',
+    u'＄':'D_up',
+    u'％':'D_down',
+    u'＇':'D_left',
+    u'＆':'D_right',
+    u'＊':'Aim',
+}
+
 
 class Glyph(object):
     char = u''
     x = 0
     y = 0
+    __surface = None
 
     @property
     def surface(self):
-        return self.font.render(self.char, fgcolor=Color('white'), style=freetype.STYLE_NORMAL)[0]
+        if not self.__surface:
+            return self.font.render(self.char, fgcolor=Color('white'), style=freetype.STYLE_NORMAL)[0]
+        else:
+            return self.__surface
+    
+    @surface.setter
+    def surface(self, value):
+        self.__surface = value
     
     @property
     def rect(self):
-        return self.font.get_rect(self.char)
+        if self.__surface:
+            return self.__surface.get_rect()
+        else:
+            return self.font.get_rect(self.char)
 
     def __init__(self, group, char, font):
         self.char = char
         self.group = group
         self.font = font
+        if char in ICONS:
+            self.__surface = image.load('icons/%s.png'%ICONS[char])
 
 class Font(object):
     glyphs = []
@@ -84,4 +111,6 @@ class Font(object):
         return [g.rect for g in self.glyphs]
 
 if __name__ == "__main__":
-    pass
+    font = Font('NotoSansHans-Light.otf', 16)
+    font.add_chars('a', u'NotoSansHans-Light.otf！\uff00＆')
+    font.save()
