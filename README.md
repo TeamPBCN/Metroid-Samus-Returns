@@ -30,3 +30,29 @@ optional arguments:
   -f FILE, --file FILE  Set package file.
   -d DIR, --dir DIR     Set dir.
 ```
+
+# fnt.py
+Font tool.
+```
+usage: fnt.py [-h] --width WIDTH [WIDTH ...] --height HEIGHT [HEIGHT ...] -c
+              CHARSET -g GROUPS [GROUPS ...] -t TABLE -x TEXTURE
+
+Metroid: Samus Returns font generator by LITTOMA, TeamPB, 2018.12
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --width WIDTH [WIDTH ...]
+                        Set font texture width.
+  --height HEIGHT [HEIGHT ...]
+                        Set font texture height.
+  -c CHARSET, --charset CHARSET
+                        Set charset file path. The file must stored in utf-16
+                        encoding.
+  -g GROUPS [GROUPS ...], --groups GROUPS [GROUPS ...]
+                        Set groups. Group string format: "name=GROUP_NAME:font
+                        =FONT_NAME:size=FONT_SIZE:filter:FILTER_PATH"
+  -t TABLE, --table TABLE
+                        Set table file path.
+  -x TEXTURE, --texture TEXTURE
+                        Set texture file path.
+```
