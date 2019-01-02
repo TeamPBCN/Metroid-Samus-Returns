@@ -3,7 +3,7 @@ import os
 import struct
 from io import BytesIO
 
-from utils import mkdirs
+from utils import align, mkdirs
 
 
 class PackageEntry(object):
@@ -150,8 +150,6 @@ class Package(object):
 
         fs.close()
 
-def align(value, alignment):
-    return (-value % alignment + alignment) % alignment
 
 def main():
     parser = argparse.ArgumentParser(

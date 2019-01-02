@@ -9,6 +9,8 @@ from pygame import Color, Rect, Surface, freetype, image
 
 from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
+from utils import align
+
 freetype.init()
 
 ICONS = {
@@ -121,9 +123,6 @@ class FontGroup(object):
         fs.write(struct.pack('i', data_size))
         
         fs.close()
-
-def align(value, alignment):
-    return (-value % alignment + alignment) % alignment
 
 class Font(object):
     chars = []

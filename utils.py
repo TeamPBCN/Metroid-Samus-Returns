@@ -1,5 +1,8 @@
 import os
 
+def align(value, alignment):
+    return (-value % alignment + alignment) % alignment
+
 def mkdirs(path):
     if not os.path.exists(path):
         os.makedirs(path)
