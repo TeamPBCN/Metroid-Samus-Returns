@@ -1,4 +1,6 @@
 # coding: utf-8
+import argparse
+import codecs
 import os
 import struct
 
@@ -73,7 +75,7 @@ class FontGroup(object):
         self.font = freetype.Font(font_name, font_size)
         self.font_size = font_size
         self.glyphs = []
-        self.img_w, self.img_h = image_size
+        self.tex_w, self.tex_h = image_size
         self.img_path = 'system/fonts/textures/japfnt.bctex\x00\x00'
     
     @property
@@ -99,7 +101,7 @@ class FontGroup(object):
         fs.write('MFNT')
         fs.write(struct.pack('BBBBIIIIIIII', 1, 0, 9, 0, 
         0x28, 
-        self.img_w, self.img_h, 
+        self.tex_w, self.tex_h, 
         2, 
         self.font_size, self.count, 
         0x28 + len(self.img_path),
@@ -129,7 +131,7 @@ class Font(object):
     groups = []
 
     def __init__(self, image_size=(512, 256)):
-        self.img_w, self.img_h = image_size
+        self.tex_w, self.tex_h = image_size
 
     def add_chars(self, chars):
         for char in chars:
@@ -142,7 +144,7 @@ class Font(object):
             self.chars.append(char)
 
     def add_group(self, name, font_name, font_size, filter):
-        group = FontGroup(name, font_name, font_size, filter, (self.img_w, self.img_h))
+        group = FontGroup(name, font_name, font_size, filter, (self.tex_w, self.tex_h))
         self.groups.append(group)
 
     def remap(self):
@@ -157,7 +159,7 @@ class Font(object):
         for glyph in self.glyphs:
             packer.add_rect(glyph.rect.width, glyph.rect.height, rid='%s_%s'%(glyph.group, glyph.char))
 
-        packer.add_bin(self.img_w, self.img_h)
+        packer.add_bin(self.tex_w, self.tex_h)
         packer.pack()
         rect_list = packer.rect_list()
         for r in rect_list:
@@ -166,24 +168,24 @@ class Font(object):
                     glyph.x = r[1]
                     glyph.y = r[2]
     
-    def save(self):
+    def save(self, texture_path, table_path):
         self.remap()
         self.save_groups()
-        self.save_image()
-        self.save_table()
+        self.save_texture(texture_path)
+        self.save_table(table_path)
     
     def save_groups(self):
         for group in self.groups:
             group.save()
 
-    def save_image(self):
-        surface = Surface((self.img_w, self.img_h), pygame.SRCALPHA, 32)
+    def save_texture(self, texture_path):
+        surface = Surface((self.tex_w, self.tex_h), pygame.SRCALPHA, 32)
         for g in self.glyphs:
             surface.blit(g.surface, Rect(g.x, g.y, g.rect.width, g.rect.height))
-        image.save(surface, "Font.png")
+        image.save(surface, texture_path)
 
-    def save_table(self):
-        fs = open('0x00004fe4_0xce14b482.muct', 'wb')
+    def save_table(self, table_path):
+        fs = open(table_path, 'wb')
         fs.write('MUCT')
         fs.write('\x01\x00\x03\x00')
         fs.write(struct.pack('ii', len(self.chars), 0x10))
@@ -197,13 +199,35 @@ class Font(object):
     def rects(self):
         return [g.rect for g in self.glyphs]
 
-if __name__ == "__main__":
-    import codecs
-    font = Font((1024, 1024))
-    chars = codecs.open('../localization/us_english.txt', 'r', 'utf-16').read()
-    font.add_group('0x00006f44_0xbd12a6bf', 'NotoSansHans-Regular.otf', 21, chars)
-    font.add_group('0x00000080_0xb9e77682', 'NotoSansHans-Regular.otf', 17, chars)
-    font.add_group('0x0000668c_0xb00cd6f8', 'NotoSansHans-Regular.otf', 14, chars)
-    font.add_group('0x00002880_0xa3db960c', 'NotoSansHans-Regular.otf', 20, chars)
+def get_group_attr(gstr, attr_name):
+    attr_index = gstr.find(attr_name) + len(attr_name) + 1
+    attr_end = gstr.find(':', attr_index)
+    result = gstr[attr_index:attr_end] if attr_end >= 0 else gstr[attr_index:]
+    if attr_name == 'size':
+        return int(result)
+    else:
+        return result
+
+def main():
+    parser = argparse.ArgumentParser(description="Metroid: Samus Returns font generator by LITTOMA, TeamPB, 2018.12")
+    parser.add_argument('-s', '--size', type=int, required=True, nargs='+', help='Set font texture size.')
+    parser.add_argument('-c', '--charset', required=True, help='Set charset file path. The file must stored in utf-16 encoding.')
+    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter:FILTER_PATH"')
+    parser.add_argument('-t', '--table', required=True, help='Set table file path.')
+    parser.add_argument('-x', '--texture', required=True, help='Set texture file path.')
+    opts = parser.parse_args()
+
+    font = Font(opts.size)
+    chars = codecs.open(opts.charset, 'r', 'utf-16').read()
+    for group in opts.groups:
+        name = get_group_attr(group, 'name')
+        font_name = get_group_attr(group, 'font')
+        size = get_group_attr(group, 'size')
+        filtr = get_group_attr(group, 'filter')
+        font.add_group(name, font_name, size, filtr)
+
     font.add_chars(chars)
-    font.save()
+    font.save(texture_path=opts.texture, table_path=opts.table)
+
+if __name__ == "__main__":
+    main()
