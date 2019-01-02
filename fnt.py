@@ -212,7 +212,7 @@ def main():
     parser.add_argument('--width', type=int, required=True, nargs='+', help='Set font texture width.')
     parser.add_argument('--height', type=int, required=True, nargs='+', help='Set font texture height.')
     parser.add_argument('-c', '--charset', required=True, help='Set charset file path. The file must stored in utf-16 encoding.')
-    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter:FILTER_PATH"')
+    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"')
     parser.add_argument('-t', '--table', required=True, help='Set table file path.')
     parser.add_argument('-x', '--texture', required=True, help='Set texture file path.')
     opts = parser.parse_args()

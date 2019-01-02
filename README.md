@@ -50,7 +50,7 @@ optional arguments:
                         encoding.
   -g GROUPS [GROUPS ...], --groups GROUPS [GROUPS ...]
                         Set groups. Group string format: "name=GROUP_NAME:font
-                        =FONT_NAME:size=FONT_SIZE:filter:FILTER_PATH"
+                        =FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"
   -t TABLE, --table TABLE
                         Set table file path.
   -x TEXTURE, --texture TEXTURE
