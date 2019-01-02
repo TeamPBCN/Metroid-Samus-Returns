@@ -210,14 +210,15 @@ def get_group_attr(gstr, attr_name):
 
 def main():
     parser = argparse.ArgumentParser(description="Metroid: Samus Returns font generator by LITTOMA, TeamPB, 2018.12")
-    parser.add_argument('-s', '--size', type=int, required=True, nargs='+', help='Set font texture size.')
+    parser.add_argument('--width', type=int, required=True, nargs='+', help='Set font texture width.')
+    parser.add_argument('--height', type=int, required=True, nargs='+', help='Set font texture height.')
     parser.add_argument('-c', '--charset', required=True, help='Set charset file path. The file must stored in utf-16 encoding.')
     parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter:FILTER_PATH"')
     parser.add_argument('-t', '--table', required=True, help='Set table file path.')
     parser.add_argument('-x', '--texture', required=True, help='Set texture file path.')
     opts = parser.parse_args()
 
-    font = Font(opts.size)
+    font = Font((opts.width, opts.height))
     chars = codecs.open(opts.charset, 'r', 'utf-16').read()
     for group in opts.groups:
         name = get_group_attr(group, 'name')
