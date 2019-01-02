@@ -108,3 +108,6 @@ romfs
 packages.txt
 texts.txt
 *.cia
+romfs*
+*.mfnt
+*.muct
