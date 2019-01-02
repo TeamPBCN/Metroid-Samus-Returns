@@ -8,6 +8,7 @@ class MFontEntry(object):
         (self.x, self.y,
         self.width, self.height, 
         self.attr1, self.attr2, self.attr3) = struct.unpack('hhhhhhh', data)
+        self.bitmap = None
     
     def __cmp__(self, other):
         return self.width.__cmp__(other.width)
@@ -29,11 +30,18 @@ class MFontEntry(object):
         return (self.x, self.y, self.width, self.height)
 
 class MFont(object):
-    def __init__(self, path):
+    def __init__(self, path=None):
+        self.entries = []
+        self.image_width = 0
+        self.image_height = 0
+        if path:
+            self.load(path)
+
+    def load(self, path):
         fs = open(path, 'rb')
         (magic, version, header_size, 
         self.image_width, self.image_height, 
-        unk1, unk2,
+        unk1, font_size,
         entry_count, entry_offset, data_size) = struct.unpack('4siiiiiiiii', 
         fs.read(struct.calcsize('4siiiiiiiii')))
 
@@ -61,6 +69,23 @@ class MFont(object):
             except:
                 print ''
                 continue
+    
+    def render_chars(self, out_path, img_path):
+        img = Image.open(img_path)
+        img_out = Image.new("RGBA", (1024, 1024))
+
+        x = 0
+        y = 100
+        for i in range(len(self.entries)):
+            cim = img.crop(self.entries[i].box)
+            # x += self.entries[i].attr1
+            img_out.paste(cim, (x, y - self.entries[i].attr2))
+            x += self.entries[i].attr3 - self.entries[i].attr1
+            if x >= img_out.width:
+                x = 0
+                y += 16
+        
+        img_out.save(out_path)
 
 class CharTable(object):
     def __init__(self, path):
@@ -72,18 +97,13 @@ class CharTable(object):
         for i in range(entries_cnt):
             char, id = struct.unpack('ii', fs.read(8))
             self.entries[id] = char
+    
+    @property
+    def chars(self):
+        return self.entries.values()
 
 if __name__ == "__main__":
     tbl = CharTable('0x00004fe4_0xce14b482.muct')
 
-    mfnt = MFont('0x00006f44_0xbd12a6bf.mfnt')
-    mfnt.export_images('japfnt_00.png', '0x00006f44_0xbd12a6bf', tbl.entries)
-    
     mfnt = MFont('0x00000080_0xb9e77682.mfnt')
-    mfnt.export_images('japfnt_00.png', '0x00000080_0xb9e77682', tbl.entries)
-    
-    mfnt = MFont('0x0000668c_0xb00cd6f8.mfnt')
-    mfnt.export_images('japfnt_00.png', '0x0000668c_0xb00cd6f8', tbl.entries)
-    
-    mfnt = MFont('0x00002880_0xa3db960c.mfnt')
-    mfnt.export_images('japfnt_00.png', '0x00002880_0xa3db960c', tbl.entries)
+    mfnt.render_chars('0x00000080_0xb9e77682.png', 'japfnt_00.png')
