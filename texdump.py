@@ -53,7 +53,9 @@ def mtxtdmpcmd(path, outdir=None):
     )
 
 def mtxtdmp(path, outdir=None):
-    os.system(mtxtdmpcmd(path, outdir))
+    cmd = mtxtdmpcmd(path, outdir)
+    print cmd
+    os.system(cmd)
 
 if __name__ == "__main__":
     fire.Fire()

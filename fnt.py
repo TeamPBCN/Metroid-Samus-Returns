@@ -6,7 +6,6 @@ import struct
 
 import pygame
 from pygame import Color, Rect, Surface, freetype, image
-
 from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
 from utils import align
@@ -96,31 +95,29 @@ class FontGroup(object):
                 glyph.empty = True
             self.glyphs.append(glyph)
     
-    def save(self):
+    def save(self, in_tex_path, in_tbl_path):
         path = '%s.mfnt'%self.name
         fs = open(path, 'wb')
 
         fs.write('MFNT')
-        fs.write(struct.pack('BBBBIIIIIIII', 1, 0, 9, 0, 
-        0x28, 
-        self.tex_w, self.tex_h, 
-        2, 
-        self.font_size, self.count, 
-        0x28 + len(self.img_path),
-        self.count * 0xE + len(self.img_path)))
+        fs.write(struct.pack('BBBBIIIIIIII', 1, 0, 9, 0, 0x28, self.tex_w, self.tex_h, 2, self.font_size, self.count, 0, 0))
 
-        fs.write(self.img_path)
+        fs.write(in_tex_path)
+        fs.write('\x00')
+        fs.seek(align(fs.tell(), 4), 1)
+        table_offset = fs.tell()
 
         for g in self.glyphs:
             fs.write(struct.pack('hhhhhhh', g.x, g.y, g.rect.width, g.rect.height, g.xoffset, g.rect.height, g.xadv))
         
         fs.seek(align(fs.tell(), 4), 1)
 
-        fs.write('system/fonts/symbols/glyphtablejap.buct\x00')
+        fs.write(in_tbl_path)
+        fs.write('\x00')
         data_size = fs.tell() - 0x28
 
-        fs.seek(0x24, 0)
-        fs.write(struct.pack('i', data_size))
+        fs.seek(0x20, 0)
+        fs.write(struct.pack('ii', table_offset, data_size))
         
         fs.close()
 
@@ -167,15 +164,15 @@ class Font(object):
                     glyph.x = r[1]
                     glyph.y = r[2]
     
-    def save(self, texture_path, table_path):
+    def save(self, texture_path, table_path, in_tex_path, in_tbl_path):
         self.remap()
-        self.save_groups()
+        self.save_groups(in_tex_path, in_tbl_path)
         self.save_texture(texture_path)
         self.save_table(table_path)
     
-    def save_groups(self):
+    def save_groups(self, in_tex_path, in_tbl_path):
         for group in self.groups:
-            group.save()
+            group.save(in_tex_path, in_tbl_path)
 
     def save_texture(self, texture_path):
         surface = Surface((self.tex_w, self.tex_h), pygame.SRCALPHA, 32)
@@ -209,25 +206,27 @@ def get_group_attr(gstr, attr_name):
 
 def main():
     parser = argparse.ArgumentParser(description="Metroid: Samus Returns font generator by LITTOMA, TeamPB, 2018.12")
-    parser.add_argument('--width', type=int, required=True, nargs='+', help='Set font texture width.')
-    parser.add_argument('--height', type=int, required=True, nargs='+', help='Set font texture height.')
+    parser.add_argument('--width', type=int, required=True, help='Set font texture width.')
+    parser.add_argument('--height', type=int, required=True, help='Set font texture height.')
     parser.add_argument('-c', '--charset', required=True, help='Set charset file path. The file must stored in utf-16 encoding.')
-    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"')
+    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "path=GROUP_PATH:font=FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"')
     parser.add_argument('-t', '--table', required=True, help='Set table file path.')
     parser.add_argument('-x', '--texture', required=True, help='Set texture file path.')
+    parser.add_argument('--inner-tex-path', required=True, help='Set texture path inside mfnt files.')
+    parser.add_argument('--inner-tbl-path', required=True, help='Set table path inside mfnt files.')
     opts = parser.parse_args()
 
     font = Font((opts.width, opts.height))
     chars = codecs.open(opts.charset, 'r', 'utf-16').read()
     for group in opts.groups:
-        name = get_group_attr(group, 'name')
+        path = get_group_attr(group, 'path')
         font_name = get_group_attr(group, 'font')
         size = get_group_attr(group, 'size')
         filtr = get_group_attr(group, 'filter')
-        font.add_group(name, font_name, size, filtr)
+        font.add_group(path, font_name, size, filtr)
 
     font.add_chars(chars)
-    font.save(texture_path=opts.texture, table_path=opts.table)
+    font.save(texture_path=opts.texture, table_path=opts.table, in_tex_path=opts.inner_tex_path, in_tbl_path=opts.inner_tbl_path)
 
 if __name__ == "__main__":
     main()
