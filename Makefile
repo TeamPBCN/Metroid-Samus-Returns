@@ -41,5 +41,17 @@ romfs/system/localization/%.txt: localization/%.txt
 romfs/%.pkg: # unpacks/%/*.*
 	$(PKGTOOL) --mkdir -cf $@ -d unpacks/$*
 
+MTXTS = $(shell find unpacks -type f -name "*.mtxt")
+TEXDUMP = python texdump.py
+
+export_tex:
+	for mtxt in $(MTXTS); do \
+		outdir=textures/$$(basename $$mtxt); \
+		outdir=$$(echo $$outdir | cut -d '.' -f 1); \
+		echo $(TEXDUMP) mtxtdmp $$mtxt $$outdir; \
+		if [ ! -d $$outdir ]; then mkdir -p $$outdir; fi; \
+		$(TEXDUMP) mtxtdmp $$mtxt $$outdir; \
+	done
+
 clean:
 	rm -rf ./romfs/
