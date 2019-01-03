@@ -6,7 +6,6 @@ import struct
 
 import pygame
 from pygame import Color, Rect, Surface, freetype, image
-
 from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
 from utils import align
@@ -209,10 +208,10 @@ def get_group_attr(gstr, attr_name):
 
 def main():
     parser = argparse.ArgumentParser(description="Metroid: Samus Returns font generator by LITTOMA, TeamPB, 2018.12")
-    parser.add_argument('--width', type=int, required=True, nargs='+', help='Set font texture width.')
-    parser.add_argument('--height', type=int, required=True, nargs='+', help='Set font texture height.')
+    parser.add_argument('--width', type=int, required=True, help='Set font texture width.')
+    parser.add_argument('--height', type=int, required=True, help='Set font texture height.')
     parser.add_argument('-c', '--charset', required=True, help='Set charset file path. The file must stored in utf-16 encoding.')
-    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "name=GROUP_NAME:font=FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"')
+    parser.add_argument('-g', '--groups', required=True, nargs='+', help='Set groups. Group string format: "path=GROUP_PATH:font=FONT_NAME:size=FONT_SIZE:filter=FILTER_PATH"')
     parser.add_argument('-t', '--table', required=True, help='Set table file path.')
     parser.add_argument('-x', '--texture', required=True, help='Set texture file path.')
     opts = parser.parse_args()
@@ -220,11 +219,11 @@ def main():
     font = Font((opts.width, opts.height))
     chars = codecs.open(opts.charset, 'r', 'utf-16').read()
     for group in opts.groups:
-        name = get_group_attr(group, 'name')
+        path = get_group_attr(group, 'path')
         font_name = get_group_attr(group, 'font')
         size = get_group_attr(group, 'size')
         filtr = get_group_attr(group, 'filter')
-        font.add_group(name, font_name, size, filtr)
+        font.add_group(path, font_name, size, filtr)
 
     font.add_chars(chars)
     font.save(texture_path=opts.texture, table_path=opts.table)
