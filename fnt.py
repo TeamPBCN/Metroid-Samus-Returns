@@ -96,8 +96,7 @@ class FontGroup(object):
             self.glyphs.append(glyph)
     
     def save(self, in_tex_path, in_tbl_path):
-        path = '%s.mfnt'%self.name
-        fs = open(path, 'wb')
+        fs = open(self.name, 'wb')
 
         fs.write('MFNT')
         fs.write(struct.pack('BBBBIIIIIIII', 1, 0, 9, 0, 0x28, self.tex_w, self.tex_h, 2, self.font_size, self.count, 0, 0))
@@ -196,9 +195,12 @@ class Font(object):
         return [g.rect for g in self.glyphs]
 
 def get_group_attr(gstr, attr_name):
-    attr_index = gstr.find(attr_name) + len(attr_name) + 1
-    attr_end = gstr.find(':', attr_index)
-    result = gstr[attr_index:attr_end] if attr_end >= 0 else gstr[attr_index:]
+    result = ''
+    strings = gstr.split(':')
+    for s in strings:
+        anam, aval = s.split('=', 2)
+        if attr_name in anam:
+            result = aval
     if attr_name == 'size':
         return int(result)
     else:
@@ -222,7 +224,7 @@ def main():
         path = get_group_attr(group, 'path')
         font_name = get_group_attr(group, 'font')
         size = get_group_attr(group, 'size')
-        filtr = get_group_attr(group, 'filter')
+        filtr = codecs.open(get_group_attr(group, 'filter'), 'r', 'utf-16').read()
         font.add_group(path, font_name, size, filtr)
 
     font.add_chars(chars)
