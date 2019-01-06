@@ -57,15 +57,15 @@ class Glyph(object):
         self.group = group
         if char in ICONS:
             self.__surface = image.load('icons/%s.png'%ICONS[char])
-            self.xoffset = 0
-            self.yoffset = self.rect.height
+            self.xoffset = -1
+            self.yoffset = self.rect.height - 1
             self.xadv = self.rect.width
         else:
             metrics = font.get_metrics(char)
             font_rect = font.get_rect(char)
-            self.xoffset = font_rect.x
-            self.yoffset = font_rect.height - font_rect.y
-            self.xadv = int(metrics[0][3])
+            self.xoffset = metrics[0][0]
+            self.yoffset = metrics[0][3]
+            self.xadv = int(metrics[0][4])
             if font_rect.width == 0 or font_rect.height == 0:
                 self.empty = True
 
@@ -77,7 +77,6 @@ class FontGroup(object):
         self.font_size = font_size
         self.glyphs = []
         self.tex_w, self.tex_h = image_size
-        self.img_path = 'system/fonts/textures/japfnt.bctex\x00\x00'
     
     @property
     def count(self):
@@ -107,7 +106,7 @@ class FontGroup(object):
         table_offset = fs.tell()
 
         for g in self.glyphs:
-            fs.write(struct.pack('hhhhhhh', g.x, g.y, g.rect.width, g.rect.height, g.xoffset, g.rect.height, g.xadv))
+            fs.write(struct.pack('hhhhhhh', g.x, g.y, g.rect.width, g.rect.height, g.xoffset, g.yoffset, g.xadv))
         
         fs.seek(align(fs.tell(), 4), 1)
 

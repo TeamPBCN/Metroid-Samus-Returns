@@ -36,10 +36,10 @@ japfnt: #$(JAP_FNT_FILES)
 	-c ./localization/japanese.txt \
 	-t fonts_jp_discardables/0x00004fe4_0xce14b482.muct \
 	-x ./0x00000080_0x27b15282.png \
-	-g "path=fonts_jp_discardables/0x00006f44_0xbd12a6bf.mfnt:font=NotoSansHans-Regular.otf:size=21:filter=./localization/japanese.txt" \
-	"path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=NotoSansHans-Regular.otf:size=17:filter=./localization/japanese.txt" \
-	"path=fonts_jp_discardables/0x0000668c_0xb00cd6f8.mfnt:font=NotoSansHans-Regular.otf:size=14:filter=./localization/japanese.txt" \
-	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=NotoSansHans-Regular.otf:size=20:filter=./localization/japanese.txt" \
+	-g "path=fonts_jp_discardables/0x00006f44_0xbd12a6bf.mfnt:font=NotoSansHans-Regular.otf:size=20:filter=./localization/japanese.txt" \
+	"path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=NotoSansHans-Regular.otf:size=16:filter=./localization/japanese.txt" \
+	"path=fonts_jp_discardables/0x0000668c_0xb00cd6f8.mfnt:font=NotoSansHans-Regular.otf:size=13:filter=./localization/japanese.txt" \
+	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=NotoSansHans-Regular.otf:size=19:filter=./localization/japanese.txt" \
 	--inner-tex-path "system/fonts/textures/japfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtablejap.buct"
 	tex3ds -f la8 --raw -z none -o ./0x00000080_0x27b15282.tex ./0x00000080_0x27b15282.png
 	$(TEXCOPY) ./0x00000080_0x27b15282.tex fonts_jp/0x00000080_0x27b15282.mtxt 0x100
