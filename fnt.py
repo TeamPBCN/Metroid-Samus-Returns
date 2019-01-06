@@ -58,7 +58,7 @@ class Glyph(object):
         if char in ICONS:
             self.__surface = image.load('icons/%s.png'%ICONS[char])
             self.xoffset = -1
-            self.yoffset = self.rect.height - 1
+            self.yoffset = self.rect.height - 2
             self.xadv = self.rect.width
         else:
             metrics = font.get_metrics(char)
