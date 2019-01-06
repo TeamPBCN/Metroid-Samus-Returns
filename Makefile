@@ -42,6 +42,7 @@ japfnt: #$(JAP_FNT_FILES)
 	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=NotoSansHans-Regular.otf:size=19:filter=./localization/japanese.txt" \
 	--inner-tex-path "system/fonts/textures/japfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtablejap.buct"
 	tex3ds -f la8 --raw -z none -o ./0x00000080_0x27b15282.tex ./0x00000080_0x27b15282.png
+	cp 0x00000080_0x27b15282.mtxt.hdr fonts_jp/0x00000080_0x27b15282.mtxt
 	$(TEXCOPY) ./0x00000080_0x27b15282.tex fonts_jp/0x00000080_0x27b15282.mtxt 0x100
 
 extract_pkg:
