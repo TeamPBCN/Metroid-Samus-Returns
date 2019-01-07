@@ -63,11 +63,15 @@ class Glyph(object):
         else:
             metrics = font.get_metrics(char)
             font_rect = font.get_rect(char)
-            self.xoffset = metrics[0][0]
-            self.yoffset = metrics[0][3]
-            self.xadv = int(metrics[0][4])
-            if font_rect.width == 0 or font_rect.height == 0:
+            if font_rect.width == 0 or font_rect.height == 0 or metrics[0] == None:
                 self.empty = True
+                self.xoffset = 0
+                self.yoffset = 0
+                self.xadv = 0
+            else:
+                self.xoffset = metrics[0][0]
+                self.yoffset = metrics[0][3]
+                self.xadv = int(metrics[0][4])
 
 class FontGroup(object):
     def __init__(self, name, font_name, font_size, filter, image_size):

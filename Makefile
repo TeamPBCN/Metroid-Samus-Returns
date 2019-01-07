@@ -31,7 +31,10 @@ packages: $(PKGS_INST)
 
 texts: $(BTXTS_INST)
 
-japfnt: #$(JAP_FNT_FILES)
+japfnt: $(JAP_FNT_FILES)
+
+$(JAP_FNT_FILES):
+	if [ ! -d "fonts_jp_discardables" ]; then mkdir fonts_jp_discardables; fi
 	$(FNTTOOL) --height 1024 --width 1024 \
 	-c ./localization/japanese.txt \
 	-t fonts_jp_discardables/0x00004fe4_0xce14b482.muct \
@@ -42,6 +45,7 @@ japfnt: #$(JAP_FNT_FILES)
 	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=NotoSansHans-Regular.otf:size=19:filter=./localization/japanese.txt" \
 	--inner-tex-path "system/fonts/textures/japfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtablejap.buct"
 	tex3ds -f la8 --raw -z none -o ./0x00000080_0x27b15282.tex ./0x00000080_0x27b15282.png
+	if [ ! -d "fonts_jp" ]; then mkdir fonts_jp; fi
 	cp 0x00000080_0x27b15282.mtxt.hdr fonts_jp/0x00000080_0x27b15282.mtxt
 	$(TEXCOPY) ./0x00000080_0x27b15282.tex fonts_jp/0x00000080_0x27b15282.mtxt 0x100
 
