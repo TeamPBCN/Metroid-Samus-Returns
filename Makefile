@@ -27,6 +27,11 @@ TEXCOPY = python texcopy.py
 
 all: japfnt packages texts
 
+luma.zip: all
+	if [ ! -d luma/titles/00040000001BFC00 ]; then mkdir -p luma/titles/00040000001BFC00; fi
+	cp -r romfs luma/titles/00040000001BFC00
+	zip -9 -r luma.zip luma
+
 packages: $(PKGS_INST)
 
 texts: $(BTXTS_INST)
@@ -86,4 +91,4 @@ export_tex:
 	done
 
 clean:
-	rm -rf ./romfs/
+	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables ./luma ./luma.zip
