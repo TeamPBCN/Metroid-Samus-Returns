@@ -18,9 +18,9 @@ BTXTS_DIR = $(dir $(word 1, $(BTXTS)))
 PTXTS = $(addprefix localization/,$(notdir $(BTXTS)))
 TXTTOOL = python btxt.py
 
-JAP_FNT_FILES = 0x00004fe4_0xce14b482.muct 0x00006f44_0xbd12a6bf.mfnt 0x00000080_0xb9e77682.mfnt 0x0000668c_0xb00cd6f8.mfnt 0x00002880_0xa3db960c.mfnt
-JAP_FNT_FILES := $(addprefix fonts_jp_discardables/,$(JAP_FNT_FILES))
-JAP_FNT_FILES += fonts_jp/0x00000080_0x27b15282.mtxt
+JAP_MFNT_FILES = 0x00006f44_0xbd12a6bf.mfnt 0x00000080_0xb9e77682.mfnt 0x0000668c_0xb00cd6f8.mfnt 0x00002880_0xa3db960c.mfnt
+JAP_FNT_DCB_FILES = 0x00004fe4_0xce14b482.muct $(JAP_MFNT_FILES)
+JAP_FNT_FILES = fonts_jp/0x00000080_0x27b15282.mtxt $(addprefix fonts_jp_discardables/,$(JAP_FNT_DCB_FILES))
 FNTTOOL = python fnt.py
 
 TEXCOPY = python texcopy.py
