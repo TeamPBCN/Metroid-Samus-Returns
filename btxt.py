@@ -7,7 +7,7 @@ import re
 import struct
 from io import BytesIO
 
-from utils import mkdirs, readstrzt
+from utils import mkdirs, read_messages, readstrzt
 
 
 class FileTypeError(Exception):
@@ -110,19 +110,6 @@ Label: {lbl}
         if not bstr:
             bstr = self.Version
         return '%d.%d.%d-%d'%struct.unpack_from('bbbb', bstr)
-
-def read_messages(path): 
-    pat = re.compile(u"No\.\d+?\nLabel: .+?\n－+?\n[\s|\S]*?\n－+?\n[\s|\S]*?\n＝+?\n\n") 
-
-    t = codecs.open(path,'r','utf-16').read() 
-    blocks = pat.findall(t)
-
-    entries = []
-    for b in blocks:
-        m = re.match(u"No\.\d+?\nLabel: (.+?)\n－+?\n[\s|\S]*?\n－+?\n([\s|\S]*?)\n＝+?\n\n", b)
-        entries.append((m.group(1), m.group(2)))
-
-    return entries
 
 def main():
     parser = argparse.ArgumentParser(

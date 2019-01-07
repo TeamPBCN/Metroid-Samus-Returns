@@ -1,4 +1,8 @@
+# coding: utf-8
+import codecs
 import os
+import re
+
 
 def align(value, alignment):
     return (-value % alignment + alignment) % alignment
@@ -15,3 +19,16 @@ def readstrzt(stream):
             break
         result += c
     return result
+
+def read_messages(path): 
+    pat = re.compile(u"No\.\d+?\nLabel: .+?\n－+?\n[\s|\S]*?\n－+?\n[\s|\S]*?\n＝+?\n\n") 
+
+    t = codecs.open(path,'r','utf-16').read() 
+    blocks = pat.findall(t)
+
+    entries = []
+    for b in blocks:
+        m = re.match(u"No\.\d+?\nLabel: (.+?)\n－+?\n[\s|\S]*?\n－+?\n([\s|\S]*?)\n＝+?\n\n", b)
+        entries.append((m.group(1), m.group(2)))
+
+    return entries
