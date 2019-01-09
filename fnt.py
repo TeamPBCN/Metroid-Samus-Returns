@@ -70,14 +70,18 @@ class Glyph(object):
                 self.xadv = 0
             else:
                 self.xoffset = metrics[0][0]
-                self.yoffset = metrics[0][3]
+                self.yoffset = metrics[0][3] - 2
                 self.xadv = int(metrics[0][4])
 
 class FontGroup(object):
     def __init__(self, name, font_name, font_size, filter, image_size):
         self.name = name
         self.filter = sorted(filter)
-        self.font = freetype.Font(font_name, font_size)
+        if os.path.isfile(font_name):
+            self.font = freetype.Font(font_name, font_size)
+        else:
+            print "Using system font"
+            self.font = freetype.SysFont(font_name, font_size)
         self.font_size = font_size
         self.glyphs = []
         self.tex_w, self.tex_h = image_size
