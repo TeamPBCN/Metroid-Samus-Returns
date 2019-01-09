@@ -90,6 +90,8 @@ class FontGroup(object):
         return self.filter[-1]
 
     def add_chars(self, chars):
+        if not self.filter:
+            return
         for c in sorted(chars):
             if c > self.lastchar:
                 break

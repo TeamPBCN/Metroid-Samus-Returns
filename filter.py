@@ -10,7 +10,7 @@ def create_filter(path, msg_file, lbl_file):
 
     for m in messages:
         for label in labels:
-            if re.match(label, m[0]):
+            if label and re.match(label, m[0]):
                 result.append(m[1])
     
     codecs.open(path, 'w', 'utf-16').writelines(result)

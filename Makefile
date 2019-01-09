@@ -98,4 +98,4 @@ export_tex:
 	done
 
 clean:
-	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables ./luma ./luma.zip *.flt
+	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables ./luma ./luma.zip *.flt 0x00000080_0x27b15282.png 0x00000080_0x27b15282.tex
