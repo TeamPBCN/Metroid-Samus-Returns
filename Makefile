@@ -26,9 +26,11 @@ JAP_FNT_FILES = fonts_jp/0x00000080_0x27b15282.mtxt $(addprefix fonts_jp_discard
 JAPFONT = NotoSansHans-Regular.otf
 FNTTOOL = python fnt.py
 
+GUIDIR = romfs/gui/textures
+GAMELOGO = $(GUIDIR)/gamelogo.bctex
 TEXCOPY = python texcopy.py
 
-all: japfnt packages texts
+all: japfnt packages texts gamelogo
 
 LUMADIR = luma/titles/00040000001BFC00
 luma.zip: all
@@ -60,6 +62,14 @@ $(JAP_FNT_FILES): $(JAP_FLTS)
 
 %.flt: localization/japanese.txt %.lbl
 	python filter.py $@  $^
+
+gamelogo: $(GAMELOGO)
+
+$(GAMELOGO): textures/gamelogo/gamelogo_00.png
+	tex3ds -f rgba8 --raw -z none -o $(<:%.png=%.tex) $<
+	if [ ! -d $(GUIDIR) ]; then mkdir -p $(GUIDIR); fi
+	cp textures/gamelogo/gamelogo.bctex.hdr $@
+	$(TEXCOPY) $(<:%.png=%.tex) $@ 0x100
 
 extract_pkg:
 	for pkg in $(PKGS); do \
