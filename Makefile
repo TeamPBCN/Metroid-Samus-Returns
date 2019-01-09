@@ -20,7 +20,7 @@ TXTTOOL = python btxt.py
 
 JAP_FNT_ENTRY = 0x00000080_0xb9e77682 0x00002880_0xa3db960c 0x0000668c_0xb00cd6f8 0x00006f44_0xbd12a6bf
 JAP_MFNT_FILES = $(addsuffix .mfnt,$(JAP_FNT_ENTRY))
-JAP_FLTS = $(addsuffix .flt,$(JAP_FNT_ENTRY))
+JAP_FLTS = $(addprefix font/,$(addsuffix .flt,$(JAP_FNT_ENTRY)))
 JAP_FNT_DCB_FILES = 0x00004fe4_0xce14b482.muct $(JAP_MFNT_FILES)
 JAP_FNT_FILES = fonts_jp/0x00000080_0x27b15282.mtxt $(addprefix fonts_jp_discardables/,$(JAP_FNT_DCB_FILES))
 JAPFONT = NotoSansHans-Regular.otf
@@ -48,14 +48,14 @@ $(JAP_FNT_FILES): $(JAP_FLTS)
 	-c ./localization/japanese.txt \
 	-t fonts_jp_discardables/0x00004fe4_0xce14b482.muct \
 	-x ./0x00000080_0x27b15282.png \
-	-g "path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=$(JAPFONT):size=16:filter=./0x00000080_0xb9e77682.flt" \
-	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=$(JAPFONT):size=19:filter=./0x00002880_0xa3db960c.flt" \
-	"path=fonts_jp_discardables/0x0000668c_0xb00cd6f8.mfnt:font=$(JAPFONT):size=13:filter=./0x0000668c_0xb00cd6f8.flt" \
-	"path=fonts_jp_discardables/0x00006f44_0xbd12a6bf.mfnt:font=$(JAPFONT):size=20:filter=./0x00006f44_0xbd12a6bf.flt" \
+	-g "path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=$(JAPFONT):size=16:filter=./font/0x00000080_0xb9e77682.flt" \
+	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=$(JAPFONT):size=19:filter=./font/0x00002880_0xa3db960c.flt" \
+	"path=fonts_jp_discardables/0x0000668c_0xb00cd6f8.mfnt:font=$(JAPFONT):size=13:filter=./font/0x0000668c_0xb00cd6f8.flt" \
+	"path=fonts_jp_discardables/0x00006f44_0xbd12a6bf.mfnt:font=$(JAPFONT):size=20:filter=./font/0x00006f44_0xbd12a6bf.flt" \
 	--inner-tex-path "system/fonts/textures/japfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtablejap.buct"
 	tex3ds -f la8 --raw -z none -o ./0x00000080_0x27b15282.tex ./0x00000080_0x27b15282.png
 	if [ ! -d "fonts_jp" ]; then mkdir fonts_jp; fi
-	cp 0x00000080_0x27b15282.mtxt.hdr fonts_jp/0x00000080_0x27b15282.mtxt
+	cp font/0x00000080_0x27b15282.mtxt.hdr fonts_jp/0x00000080_0x27b15282.mtxt
 	$(TEXCOPY) ./0x00000080_0x27b15282.tex fonts_jp/0x00000080_0x27b15282.mtxt 0x100
 
 %.flt: localization/japanese.txt %.lbl
@@ -98,4 +98,6 @@ export_tex:
 	done
 
 clean:
-	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables ./luma ./luma.zip *.flt 0x00000080_0x27b15282.png 0x00000080_0x27b15282.tex
+	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables \
+	./luma ./luma.zip 0x00000080_0x27b15282.png 0x00000080_0x27b15282.tex \
+	./font/*.flt
