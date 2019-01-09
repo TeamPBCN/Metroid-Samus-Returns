@@ -87,11 +87,11 @@ class FontGroup(object):
         return len(self.glyphs)
     @property
     def lastchar(self):
+        if not self.filter:
+            return 0
         return self.filter[-1]
 
     def add_chars(self, chars):
-        if not self.filter:
-            return
         for c in sorted(chars):
             if c > self.lastchar:
                 break
