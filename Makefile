@@ -136,6 +136,6 @@ export_tex:
 	done
 
 clean:
-	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables \
+	rm -rf ./romfs/ ./fonts_jp ./fonts_jp_discardables ./fonts ./fonts_discardables \
 	./luma ./luma.zip font/$(JAP_FNT_TEX).png font/$(JAP_FNT_TEX).tex \
-	./font/*.flt
+	font/$(DEF_FNT_TEX).png font/$(DEF_FNT_TEX).tex ./font/*.flt
