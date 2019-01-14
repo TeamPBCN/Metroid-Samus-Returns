@@ -25,13 +25,22 @@ JAP_FNT_DCB_FILES = 0x00004fe4_0xce14b482.muct $(JAP_MFNT_FILES)
 JAP_FNT_TEX = 0x00000080_0x27b15282
 JAP_FNT_FILES = fonts_jp/$(JAP_FNT_TEX).mtxt $(addprefix fonts_jp_discardables/,$(JAP_FNT_DCB_FILES))
 JAPFONT = font/NotoSansHans-Regular.otf
+
+DEF_FNT_ENTRY = 0x00000080_0xc992c4d5 0x000009d4_0x3ddde0c6 0x00001290_0x5e0dd5fc 0x00001b4c_0x0e32aea1
+DEF_MFNT_FILES = $(addsuffix .mfnt,$(DEF_FNT_ENTRY))
+DEF_FLTS = $(addprefix font/,$(addsuffix .flt,$(DEF_FNT_ENTRY)))
+DEF_FNT_DCB_FILES = 0x00002408_0x03c07881.muct $(DEF_MFNT_FILES)
+DEF_FNT_TEX = 0x00000080_0x4bd1f997
+DEF_FNT_FILES = fonts/$(DEF_FNT_TEX).mtxt $(addprefix fonts_discardables/,$(DEF_FNT_DCB_FILES))
+DEFFONT = font/NotoSansHans-Regular.otf
+
 FNTTOOL = python fnt.py
 
 GUIDIR = romfs/gui/textures
 GAMELOGO = $(GUIDIR)/gamelogo.bctex
 TEXCOPY = python texcopy.py
 
-all: japfnt packages texts gamelogo
+all: japfnt deffnt packages texts gamelogo
 
 LUMADIR = luma/titles/00040000001BFC00
 luma.zip: all
@@ -44,6 +53,8 @@ packages: $(PKGS_INST)
 texts: $(BTXTS_INST)
 
 japfnt: $(JAP_FNT_FILES)
+
+deffnt: $(DEF_FNT_FILES)
 
 $(JAP_FNT_FILES): $(JAP_FLTS)
 	if [ ! -d "fonts_jp_discardables" ]; then mkdir fonts_jp_discardables; fi
@@ -60,6 +71,22 @@ $(JAP_FNT_FILES): $(JAP_FLTS)
 	if [ ! -d "fonts_jp" ]; then mkdir fonts_jp; fi
 	cp font/$(JAP_FNT_TEX).mtxt.hdr fonts_jp/$(JAP_FNT_TEX).mtxt
 	$(TEXCOPY) font/$(JAP_FNT_TEX).tex fonts_jp/$(JAP_FNT_TEX).mtxt 0x100
+
+$(DEF_FNT_FILES): $(DEF_FLTS)
+	if [ ! -d "fonts_discardables" ]; then mkdir fonts_discardables; fi
+	$(FNTTOOL) --height 1024 --width 1024 \
+	-c ./localization/japanese.txt \
+	-t fonts_discardables/0x00002408_0x03c07881.muct \
+	-x font/$(DEF_FNT_TEX).png \
+	-g "path=fonts_discardables/0x00000080_0xc992c4d5.mfnt:font=$(JAPFONT):size=16:filter=./font/0x00000080_0xc992c4d5.flt" \
+	"path=fonts_discardables/0x000009d4_0x3ddde0c6.mfnt:font=$(JAPFONT):size=19:filter=./font/0x000009d4_0x3ddde0c6.flt" \
+	"path=fonts_discardables/0x00001290_0x5e0dd5fc.mfnt:font=$(JAPFONT):size=13:filter=./font/0x00001290_0x5e0dd5fc.flt" \
+	"path=fonts_discardables/0x00001b4c_0x0e32aea1.mfnt:font=$(JAPFONT):size=20:filter=./font/0x00001b4c_0x0e32aea1.flt" \
+	--inner-tex-path "system/fonts/textures/defaultfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtable.buct"
+	tex3ds -f la8 --raw -z none -o font/$(DEF_FNT_TEX).tex font/$(DEF_FNT_TEX).png
+	if [ ! -d "fonts" ]; then mkdir fonts; fi
+	cp font/$(DEF_FNT_TEX).mtxt.hdr fonts/$(DEF_FNT_TEX).mtxt
+	$(TEXCOPY) font/$(DEF_FNT_TEX).tex fonts/$(DEF_FNT_TEX).mtxt 0x100
 
 %.flt: localization/japanese.txt %.lbl
 	python filter.py $@  $^
@@ -93,8 +120,8 @@ romfs/system/localization/%.txt: localization/%.txt
 romfs/%.pkg: # unpacks/%/*.*
 	$(PKGTOOL) --mkdir -cf $@ -d unpacks/$*
 
-romfs/packs/system/fonts%.pkg:
-	$(PKGTOOL) --mkdir -cf $@ -d fonts$*
+romfs/packs/system/font%.pkg:
+	$(PKGTOOL) --mkdir -cf $@ -d font$*
 
 MTXTS = $(shell find $(ROM_DIR) -type f -name "*.bctex")
 TEXDUMP = python texdump.py
