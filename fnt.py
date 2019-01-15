@@ -119,10 +119,10 @@ class FontGroup(object):
             fs.write(struct.pack('hhhhhhh', g.x, g.y, g.rect.width, g.rect.height, g.xoffset, g.yoffset, g.xadv))
         
         fs.seek(align(fs.tell(), 4), 1)
+        data_size = fs.tell()
 
         fs.write(in_tbl_path)
         fs.write('\x00')
-        data_size = fs.tell() - 0x28
 
         fs.seek(0x20, 0)
         fs.write(struct.pack('ii', table_offset, data_size))
