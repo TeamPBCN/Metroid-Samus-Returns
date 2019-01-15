@@ -78,10 +78,10 @@ $(DEF_FNT_FILES): $(DEF_FLTS)
 	-c ./localization/japanese.txt \
 	-t fonts_discardables/0x00002408_0x03c07881.muct \
 	-x font/$(DEF_FNT_TEX).png \
-	-g "path=fonts_discardables/0x00000080_0xc992c4d5.mfnt:font=$(JAPFONT):size=16:filter=./font/0x00000080_0xc992c4d5.flt" \
-	"path=fonts_discardables/0x000009d4_0x3ddde0c6.mfnt:font=$(JAPFONT):size=19:filter=./font/0x000009d4_0x3ddde0c6.flt" \
-	"path=fonts_discardables/0x00001290_0x5e0dd5fc.mfnt:font=$(JAPFONT):size=13:filter=./font/0x00001290_0x5e0dd5fc.flt" \
-	"path=fonts_discardables/0x00001b4c_0x0e32aea1.mfnt:font=$(JAPFONT):size=20:filter=./font/0x00001b4c_0x0e32aea1.flt" \
+	-g "path=fonts_discardables/0x00000080_0xc992c4d5.mfnt:font=$(DEFFONT):size=16:filter=./font/0x00000080_0xc992c4d5.flt" \
+	"path=fonts_discardables/0x000009d4_0x3ddde0c6.mfnt:font=$(DEFFONT):size=19:filter=./font/0x000009d4_0x3ddde0c6.flt" \
+	"path=fonts_discardables/0x00001290_0x5e0dd5fc.mfnt:font=$(DEFFONT):size=13:filter=./font/0x00001290_0x5e0dd5fc.flt" \
+	"path=fonts_discardables/0x00001b4c_0x0e32aea1.mfnt:font=$(DEFFONT):size=20:filter=./font/0x00001b4c_0x0e32aea1.flt" \
 	--inner-tex-path "system/fonts/textures/defaultfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtable.buct"
 	tex3ds -f la8 --raw -z none -o font/$(DEF_FNT_TEX).tex font/$(DEF_FNT_TEX).png
 	if [ ! -d "fonts" ]; then mkdir fonts; fi
