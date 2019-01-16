@@ -102,8 +102,9 @@ class CharTable(object):
     def chars(self):
         return self.entries.values()
 
-if __name__ == "__main__":
-    tbl = CharTable('0x00004fe4_0xce14b482.muct')
+def render(mfnt, png, png_out):
+    MFont(mfnt).render_chars(png_out, png)
 
-    mfnt = MFont('0x00000080_0xb9e77682.mfnt')
-    mfnt.render_chars('0x00000080_0xb9e77682.png', 'japfnt_00.png')
+if __name__ == "__main__":
+    import fire
+    fire.Fire(render)
