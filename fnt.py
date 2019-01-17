@@ -58,7 +58,7 @@ class Glyph(object):
         if char in ICONS:
             self.__surface = image.load('icons/%s.png'%ICONS[char])
             self.xoffset = -1
-            self.yoffset = self.rect.height - 1
+            self.yoffset = int(font.size - 2)
             self.xadv = self.rect.width
         else:
             metrics = font.get_metrics(char)
@@ -158,16 +158,22 @@ class Font(object):
             group.add_chars(self.chars)
             self.glyphs.extend(group.glyphs)
         
-        
         packer = newPacker(sort_algo=SORT_NONE, rotation=False, bin_algo=PackingBin.Global)
         for glyph in self.glyphs:
+            if glyph.empty:
+                continue
             packer.add_rect(glyph.rect.width, glyph.rect.height, rid='%s_%s'%(glyph.group, glyph.char))
+        packer.add_rect(4, 4, "empty")
 
         packer.add_bin(self.tex_w, self.tex_h)
         packer.pack()
         rect_list = packer.rect_list()
         for r in rect_list:
             for glyph in self.glyphs:
+                if r[5] == "empty" and glyph.empty:
+                    glyph.x = r[1]
+                    glyph.y = r[2]
+                    continue
                 if '%s_%s'%(glyph.group, glyph.char) == r[5]:
                     glyph.x = r[1]
                     glyph.y = r[2]
