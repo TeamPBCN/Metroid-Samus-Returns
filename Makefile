@@ -63,7 +63,7 @@ $(JAP_FNT_FILES): $(JAP_FLTS)
 	-t fonts_jp_discardables/0x00004fe4_0xce14b482.muct \
 	-x font/$(JAP_FNT_TEX).png \
 	-g "path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=$(JAPFONT):size=14:filter=./font/0x00000080_0xb9e77682.flt" \
-	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=$(JAPFONT):size=16:filter=./font/0x00002880_0xa3db960c.flt" \
+	"path=fonts_jp_discardables/0x00002880_0xa3db960c.mfnt:font=$(JAPFONT):size=20:filter=./font/0x00002880_0xa3db960c.flt" \
 	"path=fonts_jp_discardables/0x0000668c_0xb00cd6f8.mfnt:font=$(JAPFONT):size=11:filter=./font/0x0000668c_0xb00cd6f8.flt" \
 	"path=fonts_jp_discardables/0x00006f44_0xbd12a6bf.mfnt:font=$(JAPFONT):size=17:filter=./font/0x00006f44_0xbd12a6bf.flt" \
 	--inner-tex-path "system/fonts/textures/japfnt.bctex" --inner-tbl-path "system/fonts/symbols/glyphtablejap.buct"
