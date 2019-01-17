@@ -36,18 +36,20 @@ class MFont(object):
         self.image_height = 0
         if path:
             self.load(path)
+        print "Font size:", self.font_size
+        print "Count:", self.entry_count
 
     def load(self, path):
         fs = open(path, 'rb')
         (magic, version, header_size, 
         self.image_width, self.image_height, 
-        unk1, font_size,
-        entry_count, entry_offset, data_size) = struct.unpack('4siiiiiiiii', 
+        unk1, self.font_size,
+        self.entry_count, entry_offset, data_size) = struct.unpack('4siiiiiiiii', 
         fs.read(struct.calcsize('4siiiiiiiii')))
 
         fs.seek(entry_offset, 0)
         self.entries = []
-        for i in range(entry_count):
+        for i in range(self.entry_count):
             self.entries.append(MFontEntry(fs.read(0x0E)))
 
         fs.close()
@@ -72,10 +74,10 @@ class MFont(object):
     
     def render_chars(self, out_path, img_path):
         img = Image.open(img_path)
-        img_out = Image.new("RGBA", (1024, 1024))
+        img_out = Image.new("RGBA", (512, 512))
 
         x = 0
-        y = 100
+        y = 10
         for i in range(len(self.entries)):
             cim = img.crop(self.entries[i].box)
             # x += self.entries[i].attr1
@@ -83,7 +85,7 @@ class MFont(object):
             x += self.entries[i].attr3 - self.entries[i].attr1
             if x >= img_out.width:
                 x = 0
-                y += 16
+                y += 20
         
         img_out.save(out_path)
 
