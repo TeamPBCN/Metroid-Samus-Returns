@@ -9,6 +9,7 @@ from pygame import Color, Rect, Surface, freetype, image
 from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
 from utils import align
+from pack import Packer
 
 freetype.init()
 
@@ -72,6 +73,8 @@ class Glyph(object):
                 self.xoffset = metrics[0][0]
                 self.yoffset = metrics[0][3] - 2
                 self.xadv = int(metrics[0][4])
+        if char == ' ':
+            self.xadv = 8
 
 class FontGroup(object):
     def __init__(self, name, font_name, font_size, filter, image_size):
@@ -158,16 +161,17 @@ class Font(object):
             group.add_chars(self.chars)
             self.glyphs.extend(group.glyphs)
         
-        packer = newPacker(sort_algo=SORT_NONE, rotation=False, bin_algo=PackingBin.Global)
+        # packer = newPacker(sort_algo=SORT_NONE, rotation=False, bin_algo=PackingBin.Global)
+        packer = Packer(self.tex_w, self.tex_h)
         for glyph in self.glyphs:
             if glyph.empty:
                 continue
             packer.add_rect(glyph.rect.width, glyph.rect.height, rid='%s_%s'%(glyph.group, glyph.char))
         packer.add_rect(4, 4, "empty")
 
-        packer.add_bin(self.tex_w, self.tex_h)
+        # packer.add_bin(self.tex_w, self.tex_h)
         packer.pack()
-        rect_list = packer.rect_list()
+        rect_list = packer.rectst
         for r in rect_list:
             for glyph in self.glyphs:
                 if r[5] == "empty" and glyph.empty:
