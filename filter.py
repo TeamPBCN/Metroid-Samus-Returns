@@ -16,6 +16,13 @@ def create_filter(path, msg_file, lbl_file):
     nums = '%d'*10
     nums = nums%tuple(range(10))
     result.append(nums)
+
+    alphabet = ''
+    for i in range(ord('a'), ord('z')+1):
+        alphabet += chr(i)
+    for i in range(ord('A'), ord('Z')+1):
+        alphabet += chr(i)
+    result.append(alphabet)
     
     codecs.open(path, 'w', 'utf-16').writelines(result)
 
