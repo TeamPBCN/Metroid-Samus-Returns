@@ -14,10 +14,10 @@
 
 ### #0 准备工作
 
-1. 安装 Python 第三方包： [python-fire](https://github.com/google/python-fire)、[rectpack](https://github.com/secnot/rectpack)
+1. 安装 Python 第三方包： [python-fire](https://github.com/google/python-fire)、[pygame](https://github.com/pygame/pygame)
 
    ```bash
-   python -m pip install fire rectpack
+   python -m pip install fire pygame
    ```
 
 2. 安装 [devkitPro](https://devkitpro.org/wiki/Getting_Started)（Windows 系统下推荐使用 msys2 安装），并将devkitPro添加到PATH变量。安装完成后执行以下命令以确保所需工具已安装：
@@ -48,7 +48,7 @@
 
 1. 导出RomFS。
 
-   你可以使用`3dstool`或`ctrtool`解包本游戏的`RomFS`并将其放到本项目的`cia`目录下。或者使用`fuse-3ds`直接将游戏`ROM`挂载到本项目下的`cia`目录。
+   你可以使用`3dstool`或`ctrtool`解包本游戏的`RomFS`并将其放到本项目的`cia`目录下。或者使用 [fuse-3ds](https://github.com/ihaveamac/fuse-3ds) 直接将游戏`ROM`挂载到本项目下的`cia`目录。
 
 2. 导出文本。
 
@@ -74,7 +74,7 @@ make luma.zip
 
 ### btxt.py
 
-二进制<->文本转换工具。
+二进制文本 <-> 普通文本转换工具。
 
 ```
 使用方法: btxt.py [-h] (-x | -c) [-b BINARY] [-p PLAIN]
