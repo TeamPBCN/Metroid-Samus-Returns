@@ -6,7 +6,6 @@ import struct
 
 import pygame
 from pygame import Color, Rect, Surface, freetype, image
-from rectpack.packer import SORT_NONE, PackingBin, newPacker
 
 from utils import align
 from pack import Packer

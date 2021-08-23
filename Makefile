@@ -1,6 +1,7 @@
 instpath = $(subst $(word 1, $(subst romfs/, ,$1)),./,$1)
 
 ROM_DIR ?= ./cia
+LOC_TXT = localization/japanese.txt
 
 PKGS = $(shell find $(ROM_DIR) -type f -name "*.pkg")
 PKGS_INST := $(call instpath,$(shell cat packages.txt))
@@ -52,6 +53,12 @@ packages: $(PKGS_INST)
 
 texts: $(BTXTS_INST)
 
+fntpkg: japfnt deffnt
+	make romfs/packs/system/fonts_jp.pkg 
+	make romfs/packs/system/fonts_jp_discardables.pkg
+	make romfs/packs/system/fonts.pkg
+	make romfs/packs/system/fonts_discardables.pkg
+
 japfnt: $(JAP_FNT_FILES)
 
 deffnt: $(DEF_FNT_FILES)
@@ -59,7 +66,7 @@ deffnt: $(DEF_FNT_FILES)
 $(JAP_FNT_FILES): $(JAP_FLTS)
 	if [ ! -d "fonts_jp_discardables" ]; then mkdir fonts_jp_discardables; fi
 	$(FNTTOOL) --height 512 --width 1024 \
-	-c ./localization/japanese.txt \
+	-c $(LOC_TXT) \
 	-t fonts_jp_discardables/0x00004fe4_0xce14b482.muct \
 	-x font/$(JAP_FNT_TEX).png \
 	-g "path=fonts_jp_discardables/0x00000080_0xb9e77682.mfnt:font=$(JAPFONT):size=14:filter=./font/0x00000080_0xb9e77682.flt" \
@@ -75,7 +82,7 @@ $(JAP_FNT_FILES): $(JAP_FLTS)
 $(DEF_FNT_FILES): $(DEF_FLTS)
 	if [ ! -d "fonts_discardables" ]; then mkdir fonts_discardables; fi
 	$(FNTTOOL) --height 512 --width 1024 \
-	-c ./localization/japanese.txt \
+	-c $(LOC_TXT) \
 	-t fonts_discardables/0x00002408_0x03c07881.muct \
 	-x font/$(DEF_FNT_TEX).png \
 	-g "path=fonts_discardables/0x00000080_0xc992c4d5.mfnt:font=$(DEFFONT):size=14:filter=./font/0x00000080_0xc992c4d5.flt" \
@@ -88,7 +95,7 @@ $(DEF_FNT_FILES): $(DEF_FLTS)
 	cp font/$(DEF_FNT_TEX).mtxt.hdr fonts/$(DEF_FNT_TEX).mtxt
 	$(TEXCOPY) font/$(DEF_FNT_TEX).tex fonts/$(DEF_FNT_TEX).mtxt 0x100
 
-%.flt: localization/japanese.txt %.lbl
+%.flt: $(LOC_TXT) %.lbl
 	python filter.py $@  $^
 
 gamelogo: $(GAMELOGO)
