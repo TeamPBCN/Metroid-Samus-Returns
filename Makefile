@@ -2,10 +2,13 @@ instpath = $(subst $(word 1, $(subst romfs/, ,$1)),./,$1)
 
 ROM_DIR ?= ./cia
 LOC_TXT = localization/japanese.txt
+PKGTOOL = python pkg.py
+TXTTOOL = python btxt.py
+FNTTOOL = python fnt.py
+TEXCOPY = python texcopy.py
 
 PKGS = $(shell find $(ROM_DIR) -type f -name "*.pkg")
 PKGS_INST := $(call instpath,$(shell cat packages.txt))
-PKGTOOL = python pkg.py
 
 BTXTS = $(shell find $(ROM_DIR) -type f -name "*.txt")
 ifeq ($(BTXTS),)
@@ -17,7 +20,6 @@ BTXTS_INST = $(call instpath,$(shell cat texts.txt))
 endif
 BTXTS_DIR = $(dir $(word 1, $(BTXTS)))
 PTXTS = $(addprefix localization/,$(notdir $(BTXTS)))
-TXTTOOL = python btxt.py
 
 JAP_FNT_ENTRY = 0x00000080_0xb9e77682 0x00002880_0xa3db960c 0x0000668c_0xb00cd6f8 0x00006f44_0xbd12a6bf
 JAP_MFNT_FILES = $(addsuffix .mfnt,$(JAP_FNT_ENTRY))
@@ -35,11 +37,8 @@ DEF_FNT_TEX = 0x00000080_0x4bd1f997
 DEF_FNT_FILES = fonts/$(DEF_FNT_TEX).mtxt $(addprefix fonts_discardables/,$(DEF_FNT_DCB_FILES))
 DEFFONT = font/NotoSansHans-Regular.otf
 
-FNTTOOL = python fnt.py
-
 GUIDIR = romfs/gui/textures
 GAMELOGO = $(GUIDIR)/gamelogo.bctex
-TEXCOPY = python texcopy.py
 
 all: japfnt deffnt packages texts gamelogo
 
@@ -54,7 +53,7 @@ packages: $(PKGS_INST)
 texts: $(BTXTS_INST)
 
 fntpkg: japfnt deffnt
-	make romfs/packs/system/fonts_jp.pkg 
+	make romfs/packs/system/fonts_jp.pkg
 	make romfs/packs/system/fonts_jp_discardables.pkg
 	make romfs/packs/system/fonts.pkg
 	make romfs/packs/system/fonts_discardables.pkg
