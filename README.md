@@ -2,7 +2,7 @@
 
 ## 简介
 
-《密特罗德：萨姆斯回归（*Metroid: Samus Returns*）》是 SFC  《密特罗德2（*Metroid 2*）》的重制版，本项目是其汉化项目。你可以使用本项目提供的工具对游戏的文本进行编辑，并生成修改补丁。
+《密特罗德：萨姆斯回归（*Metroid: Samus Returns*）》是 GB  《密特罗德2（*Metroid 2*）》的重制版，本项目是其汉化项目。你可以使用本项目提供的工具对游戏的文本进行编辑，并生成修改补丁。
 
 ## 开始
 
@@ -14,34 +14,10 @@
 
 ### #0 准备工作
 
-1. 安装 Python 第三方包： [python-fire](https://github.com/google/python-fire)、[pygame](https://github.com/pygame/pygame)
+安装 Python 第三方包： [python-fire](https://github.com/google/python-fire)、[pygame](https://github.com/pygame/pygame)
 
    ```bash
    python -m pip install fire pygame
-   ```
-
-2. 安装 [devkitPro](https://devkitpro.org/wiki/Getting_Started)（Windows 系统下推荐使用 msys2 安装），并将devkitPro添加到PATH变量。安装完成后执行以下命令以确保所需工具已安装：
-
-   ```bash
-   
-   tex3ds -v
-   
-   输出：
-   
-    tex3ds v1.0.0
-    
-    Copyright (c) 2017 Michael Theall (mtheall)
-    tex3ds is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    tex3ds is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with tex3ds. If not, see <http://www.gnu.org/licenses/>.
    ```
 
 ### #1 导出所需资源文件（文本、LOGO图像）
@@ -57,6 +33,11 @@
    ```
 
 3. 导出LOGO。
+
+   ```bash
+   python texdump.py mtxtdmp <logo文件路径>
+   ```
+
 
 ### #2 编辑
 
