@@ -29,13 +29,13 @@
 2. 导出文本。
 
 ```batch
-python btxt.py -xb RomFS\system\localization\要翻译的语言.txt -p 导出.txt
+python btxt.py -xb romfs\system\localization\<要翻译的语言>.txt -p 导出.txt
 ```
 
 3. 导出LOGO。
 
 ```batch
-python texdump.py mtxtdmp RomFS\gui\textures\gamelogo.bctex . 
+python texdump.py mtxtdmp romfs\gui\textures\gamelogo.bctex . 
 ```
 
 
@@ -48,13 +48,15 @@ python texdump.py mtxtdmp RomFS\gui\textures\gamelogo.bctex .
 ### 3 生成汉化文件
 * 生成文本二进制
 ```batch
-python btxt.py -cb <生成目录>\要翻译的语言.txt -p 导出.txt
+md build\romfs\system\localization
+python btxt.py -cb build\romfs\system\localization\<要翻译的语言>.txt -p 导出.txt
 ```
 * 生成logo
 ```batch
-.\bin\tex3ds.exe -f rgba8 --raw -z none -o <生成目录>\gamelogo.tex gamelogo.png
-copy textures\gamelogo\gamelogo.bctex.hdr <生成目录>\gamelogo.bctex
-python texcopy.py <生成目录>\gamelogo.tex <生成目录>\gamelogo.bctex 0x100
+md build\romfs\gui\textures
+.\bin\tex3ds.exe -f rgba8 --raw -z none -o build\gamelogo.tex gamelogo.png
+copy textures\gamelogo\gamelogo.bctex.hdr build\romfs\gui\textures\gamelogo.bctex
+python texcopy.py build\gamelogo.tex build\romfs\gui\textures\gamelogo.bctex 0x100
 ```
 * 生成字库
 ```batch
